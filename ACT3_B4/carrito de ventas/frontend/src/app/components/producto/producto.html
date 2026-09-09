@@ -1,0 +1,130 @@
+<div class="crud-container">
+  <h2 class="crud-title">Gestión de Productos</h2>
+
+  <form (ngSubmit)="guardarProducto()" class="crud-form">
+    <input 
+      type="text" 
+      class="form-input"
+      [(ngModel)]="productoForm.nombre" 
+      name="nombre" 
+      placeholder="Nombre del producto" 
+      required 
+    />
+    
+    <input 
+      type="date" 
+      class="form-input"
+      [(ngModel)]="productoForm.fecha_ingreso" 
+      name="fecha_ingreso" 
+      required 
+    />
+    
+    <input 
+      type="text" 
+      class="form-input"
+      [(ngModel)]="productoForm.stock" 
+      name="stock" 
+      placeholder="Cantidad en Stock" 
+      required 
+    />
+
+    <div class="actions-group">
+      <button type="submit" class="btn btn-primary">
+        {{ esEdicion ? 'Actualizar Producto' : 'Guardar Producto' }}
+      </button>
+      <button 
+        type="button" 
+        class="btn btn-secondary" 
+        *ngIf="esEdicion" 
+        (click)="limpiarFormulario()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+
+  <!-- Tabla de Productos MySQL -->
+  <div class="table-responsive">
+    <table class="crud-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Fecha de Ingreso</th>
+          <th>Stock</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prod of productos">
+          <td>{{ prod.id_producto }}</td>
+          <td>{{ prod.nombre }}</td>
+          <td>{{ prod.fecha_ingreso }}</td>
+          <td>{{ prod.stock }}</td>
+          <td class="table-actions">
+            <button class="btn btn-warning" (click)="seleccionarParaEditar(prod)">Editar</button>
+            <button class="btn btn-danger" (click)="eliminar(prod.id_producto)">Eliminar</button>
+            <button class="btn btn-primary" (click)="agregarCarrito(prod)">+ Carrito</button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="productos.length === 0">
+          <td colspan="5" class="empty-row">No existen productos registrados actualmente.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Bloque del Carrito de Compras -->
+  <div class="crud-container" style="margin-top: 3rem; background-color: #f8f9fa;">
+    <h2>Carrito de Compras</h2>
+
+    <!-- El *ngIf define la variable 'items' para TODO este contenedor -->
+    <div *ngIf="(carrito$ | async) as items">
+      
+      <div *ngIf="items.length > 0; else carritoVacio">
+        <table class="crud-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Precio/Stock</th>
+              <th>Cantidad</th>
+              <th>Subtotal</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of items">
+              <td>{{ item.producto.nombre }}</td>
+              <td>Q{{ item.producto.stock }}</td>
+              <td>
+                <input 
+                  type="number" 
+                  [ngModel]="item.cantidad" 
+                  (ngModelChange)="actualizarCantidad(item.producto.id_producto, $event)"
+                  min="1" 
+                  style="width: 60px; padding: 4px;"
+                />
+              </td>
+              <td>{{ (item.cantidad * (+item.producto.stock || 0)) }}</td>
+              <td>
+                <button class="btn btn-danger" (click)="eliminarCarrito(item.producto.id_producto)">
+                  Quitar
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="text-align: right; margin-top: 1rem;">
+          <h3>Total del Carrito: Q{{ items | totalCarrito }}</h3>
+        </div>
+      </div>
+
+      <ng-template #carritoVacio>
+        <p style="text-align: center; color: #6c757d; padding: 1rem;">
+          El carrito está vacío.
+        </p>
+      </ng-template>
+
+    </div>
+  </div>
+</div>
