@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>Formulas</h2>
+    <div class="container">
+        <p>ingrese un numero</p>
+        <input type="number" [(ngModel)]="num1" placeholder="Ingrese un numero" />
+<input type="number" [(ngModel)]="num2" placeholder="Ingrese otro numero" />
+    </div>
+    <div class="opc">
+        <p>que desea hacer?</p>
+        <button (click)="setOperacion('sumar')">Sumar</button>
+        <button (click)="setOperacion('restar')">restar</button>
+        <button (click)="setOperacion('multiplicar')">multiplicar</button>
+        <button (click)="setOperacion('dividir')">dividir</button>
+        <button (click)="setOperacion('raiz')">sacar raiz cuadrada</button>
+    </div>
+
+<p>el resultado es: <strong>{{ num1 | operacion : operacionE : num2 }}</strong></p>
+    
+</body>
+</html>
